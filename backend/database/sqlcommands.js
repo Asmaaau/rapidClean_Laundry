@@ -6,7 +6,7 @@ const mysql = require('mysql2')
 //     email VARCHAR UNIQUE NOT NULL,
 //     userpassword VARCHAR NOT NULL,
 //     image_url VARCHAR,
-//     isActive BOOLEAN DEFAULT ,
+//     isActive BOOLEAN DEFAULT ,h
 //     created_at TIMESTAMP NOT NULL,
 //     updated_at TIMESTAMP NOT NULL
 //   );
