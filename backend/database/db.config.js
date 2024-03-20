@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const createTable = require('./sqlcommands')
+const createUserTable = require('./sqlcommands')
 
 // const connect = mysql.createPool({
 //     connectionLimit: parseInt(process.env.DB_CONNECTIONLIMIT),
@@ -25,7 +25,7 @@ const connectDB = async(req, res) => {
                 reject(err)
             } 
             else{
-                // connection.query(createTable)
+                // connection.query(createUserTable)
                 resolve(connection)
             }
         })

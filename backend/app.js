@@ -3,7 +3,8 @@ const express = require('express');
 const cors = require('cors')
 const config = require('dotenv');
 const bodyParser = require('body-parser');
-const {connectDB} = require('./database/db.config')
+const {connectDB} = require('./database/db.config');
+const {createTables} = require('./database/runQueries')
 
 // impport routes
 
@@ -31,8 +32,10 @@ app.listen(port, ()=> {
 
 // connect to database
 
-connectDB().then(()=>{
-    console.log("databse connection successful")
-}).catch(err=>{
-    console.log(err)
-})
+// connectDB().then(()=>{
+//     console.log("databse connection successful")
+// }).catch(err=>{
+//     console.log(err)
+// })
+
+createTables()

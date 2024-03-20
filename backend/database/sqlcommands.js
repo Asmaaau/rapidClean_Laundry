@@ -12,7 +12,7 @@ const mysql = require('mysql2')
 //   );
 // `
 
-const createTable = `
+const createUserTable = `
 CREATE TABLE IF NOT EXISTS User(
     userid VARCHAR(255) NOT NULL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -28,4 +28,4 @@ CREATE TABLE IF NOT EXISTS User(
 // created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 // updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 
-module.exports = createTable
+module.exports = {createUserTable}
