@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
-const createUserTable = require('./sqlcommands')
+const createUserTable = require('./sqlcommands');
+require('dotenv').config()
 
 // const connect = mysql.createPool({
 //     connectionLimit: parseInt(process.env.DB_CONNECTIONLIMIT),
@@ -8,6 +9,9 @@ const createUserTable = require('./sqlcommands')
 //     password: process.env.DB_PWD,
 //     database: process.env.DB_NAME
 // })
+
+// console.log(process.env.DB_HOST)
+// console.log(typeof process.env.DB_HOST)
 
 const connect = mysql.createPool({
     connectionLimit: 10,
@@ -31,19 +35,6 @@ const connectDB = async(req, res) => {
         })
     })
 }
-
-
-// const connectDB = async(req, res) => {
-   
-//         connect.getConnection((err, connection)=> {
-//             if(err) {
-//                 console.log(err)
-//             } 
-//             else{
-//                 console.log("databse connection successful")
-//             }
-//         })
-// }
 
 const runQuery = (connection, sql_command, values) => {
     return new Promise((resolve, reject)=> {

@@ -4,12 +4,14 @@ const cors = require('cors')
 const config = require('dotenv');
 const bodyParser = require('body-parser');
 const {connectDB} = require('./database/db.config');
-const {createTables} = require('./database/runQueries')
+const {createTables, dropped} = require('./database/runQueries')
+
 
 // impport routes
+const {router} = require('./routes/routes')
 
 
-config.config({path: "config/config.env"})
+config.config({path: "./config/config.env"})
 
 
 // create express object
@@ -20,6 +22,7 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
+app.use('/', router)
 
 // start express server
 
@@ -33,9 +36,17 @@ app.listen(port, ()=> {
 // connect to database
 
 // connectDB().then(()=>{
-//     console.log("databse connection successful")
+//     console.log("Databse connection successful")
 // }).catch(err=>{
 //     console.log(err)
 // })
 
-createTables()
+// createTables()
+// it keeps running regardless
+// createTables().then(() => {
+//     console.log("Tables created successfully");
+// }).catch((err) => {
+//     console.error("Error creating tables:", err);
+//     process.exit(1);
+// });
+// dropped()
