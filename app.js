@@ -5,6 +5,7 @@ const config = require('dotenv');
 const bodyParser = require('body-parser');
 const {connectDB} = require('./database/db.config');
 const {createTables, dropped} = require('./database/runQueries')
+const errorHandler = require('./middlewares/errorHandler')
 
 
 // impport routes
@@ -19,10 +20,13 @@ const app = express()
 
 
 // middleware
-app.use(cors())
+app.use(cors())     //should be the first middleware
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 app.use('/', router)
+
+
+app.use(errorHandler)   //should be the last middleware
 
 // start express server
 
@@ -43,10 +47,16 @@ app.listen(port, ()=> {
 
 // createTables()
 // it keeps running regardless
+
+// app.use('/', createTables)
+
+// createTables()
+
 // createTables().then(() => {
-//     console.log("Tables created successfully");
+//     // console.log("Tables created successfully");
 // }).catch((err) => {
 //     console.error("Error creating tables:", err);
 //     process.exit(1);
 // });
+
 // dropped()

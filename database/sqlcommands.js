@@ -1,25 +1,22 @@
-const mysql = require('mysql2')
-
-
-const createUserTable = `
-CREATE TABLE IF NOT EXISTS User(
-    userid VARCHAR(255) NOT NULL PRIMARY KEY,
+const createCustomerTable = `
+CREATE TABLE IF NOT EXISTS Customer(
+    cus_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    fullname VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     userpassword VARCHAR(255) NOT NULL,
-    fullname VARCHAR(255) NOT NULL,
+    username VARCHAR(255) UNIQUE,
+    phone_no VARCHAR(255),
     image_url VARCHAR(255),
     isActive BOOLEAN DEFAULT TRUE,
+    salt VARCHAR(255),
+    address_id VARCHAR(255),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );`
 
-const createAdminTable = `
-CREATE TABLE IF NOT EXISTS Admin(
-    admin_id VARCHAR(255) NOT NULL PRIMARY KEY,
-    level VARCHAR(255) NOT NULL,
-    userid VARCHAR(255) NOT NULL,
-    FOREIGN KEY (userid) REFERENCES User(userid)
-);`
+// create salt and add NOT NULL to the salt column
 
 const createAddressTable = `
 CREATE TABLE IF NOT EXISTS Address(
@@ -30,33 +27,41 @@ CREATE TABLE IF NOT EXISTS Address(
 );`
 
 
-const createCustomerTable = `
-CREATE TABLE IF NOT EXISTS Customer(
-    cusid VARCHAR(255) NOT NULL PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL,
+const createAdminTable = `
+CREATE TABLE IF NOT EXISTS Admin(
+    admin_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    fullname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    userpassword VARCHAR(255) NOT NULL,
     phone_no VARCHAR(255) NOT NULL,
-    userid VARCHAR(255) NOT NULL,
-    address_id VARCHAR(255) NOT NULL,
-    FOREIGN KEY (userid) REFERENCES User(userid),
-    FOREIGN KEY (address_id) REFERENCES Address(address_id)
+    image_url VARCHAR(255),
+    isActive BOOLEAN DEFAULT TRUE,
+    salt VARCHAR(255) NOT NULL,
+    level VARCHAR(255) NOT NULL,
+    userid VARCHAR(255) NOT NULL
 );`
+
+
+
 
 
 const dropTable = tableName => `DROP TABLE IF EXISTS ${tableName};`;
 
-const insertSignup = `insert into User(userid, fullname, email, userpassword) values(?,?,?,?)`
+const insertSignup = `insert into Customer(cus_id, fullname, email, userpassword, salt) values(?,?,?,?,?)`
 
-const checkEmailLogin = `select * from User where email = ?`
+const checkEmailLogin = `select * from Customer where email = ?`
 
-const updateLogin = "update User set userpassword = ? where email = ?"
+const updateLogin = "update Customer set userpassword = ? where email = ?"
+
+const getUserByID = "select * from Customer where cus_id = ?"
 
 module.exports = {
-    createUserTable,
-    createAdminTable,
-    createCustomerTable,
-    createAddressTable,
-    dropTable,
-    insertSignup,
-    checkEmailLogin,
-    updateLogin
+            createAdminTable,
+            createCustomerTable,
+            createAddressTable,
+            dropTable,
+            insertSignup,
+            checkEmailLogin,
+            updateLogin,
+            getUserByID
 }

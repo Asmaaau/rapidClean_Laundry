@@ -4,15 +4,11 @@ const { insertSignup } = require('../database/sqlcommands');
 const { v4: uuidv4 } = require('uuid');
 const bcSaltRounds = bcrypt.genSaltSync(10)
 
-
-
-
-
 const signup = async (req, res) => {
 
      const userid = uuidv4();
      const credentials = {
-          userid: userid,
+          cus_id: userid,
           fullname: req.body.fullname,
           email: req.body.email,
           userpassword: bcrypt.hashSync(req.body.userpassword, bcSaltRounds)
@@ -48,6 +44,7 @@ const signup = async (req, res) => {
           }
           // Handle other errors
           console.error("Signup error:", err);
+          
           res.status(500).json({ message: "Error!, For some reasons, your account could not be created." })
      }
 
