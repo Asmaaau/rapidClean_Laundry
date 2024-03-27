@@ -28,35 +28,41 @@ app.use('/', router)
 
 app.use(errorHandler)   //should be the last middleware
 
-// start express server
+
 
 const port = process.env.PORT || 4001
-app.listen(port, ()=> {
-    console.log(`server running on port ${port}`)
-})
+
 
 
 
 // connect to database
 
-// connectDB().then(()=>{
-//     console.log("Databse connection successful")
-// }).catch(err=>{
-//     console.log(err)
-// })
+connectDB().then(()=>{
+    console.log("Databse connection successful")
+
+    
+// start express server
+    app.listen(port, ()=> {
+        console.log(`server running on port ${port}`)
+    })
+}).catch(err=>{
+    console.log(err)
+})
+
+
 
 // createTables()
 // it keeps running regardless
 
-// app.use('/', createTables)
+// app.use('/', createTables) 
 
 // createTables()
 
-// createTables().then(() => {
-//     // console.log("Tables created successfully");
-// }).catch((err) => {
-//     console.error("Error creating tables:", err);
-//     process.exit(1);
-// });
+createTables().then(() => {
+    // console.log("Tables created successfully");
+}).catch((err) => {
+    console.error("Error creating tables:", err);
+    process.exit(1);
+}); 
 
 // dropped()

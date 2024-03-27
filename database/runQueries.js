@@ -1,5 +1,5 @@
 const { connectDB } = require('./db.config')
-const { createAdminTable, createCustomerTable, createAddressTable, dropTable } = require('./sqlcommands')
+const { createAdminTable, createCustomerTable, createAddressTable, dropTable, createOrderTable, createProductTable, createServicesTable, createExtrasTable, createOrderDetailsTable, createDeliveryModeTable, createDeliveryTable } = require('./sqlcommands')
 
 
 // const createTables = async (req, res) => {
@@ -17,6 +17,7 @@ const { createAdminTable, createCustomerTable, createAddressTable, dropTable } =
 //             throw error;
 //         }
 // }
+
 const createTables = async (req, res) => {
     const connection = await connectDB()
 
@@ -31,6 +32,13 @@ const createTables = async (req, res) => {
                 connection.query(createAddressTable);
                 connection.query(createAdminTable);
                 connection.query(createCustomerTable);
+                connection.query(createOrderTable);
+                connection.query(createProductTable);
+                connection.query(createServicesTable);
+                connection.query(createExtrasTable);
+                connection.query(createOrderDetailsTable);
+                connection.query(createDeliveryModeTable);
+                connection.query(createDeliveryTable);
                 connection.release();
                 console.log("Tables created successfully");
             } catch (error) {
@@ -55,7 +63,7 @@ const dropped = async (req, res) => {
             console.log(result)
         }
     })
-
+ 
 }
 
 module.exports = { createTables, dropped }

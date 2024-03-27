@@ -7,7 +7,12 @@ const verifyAuth = async (req, res, next) => {
   try {
     const connection = await connectDB();
 
+    let checkUserId;
+
     const bearer = req.headers["authorization"];
+
+    const auth = req.headers["auth"];
+    console.log(req.headers);
 
     if (typeof bearer == "undefined") {
       return next(new ErrorResponse("Unauthorized user", 404));
@@ -24,12 +29,18 @@ const verifyAuth = async (req, res, next) => {
       return next(new ErrorResponse("Unauthorized user", 401));
     }
 
-    //     get user by id
-    const checkUserId = await runQuery(connection, getUserByID, [
-      decoded.userid,
-    ]);
+    // recheck this code
+    if (auth && auth == "admin-auth") {
+      //get user by id for admin
+      checkUserId = await runQuery(connection, sqlcommandforadmin, [
+        decoded.userid,
+      ]);
+    } else {
+      //get user by id
+      checkUserId = await runQuery(connection, getUserByID, [decoded.userid]);
+    }
 
-//     console.log(checkUserId);
+    //     console.log(checkUserId);
 
     if (checkUserId.length === 0) {
       return next(new ErrorResponse("Unauthorized user", 401));
