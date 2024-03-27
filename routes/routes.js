@@ -8,7 +8,8 @@ const {insertProduct} = require('../controllers/product.controllers')
 
 router.post('/signup', signup);
 router.get('/login', login);
-router.get('/details',verifyAuth, details);
+// router.get('/details',verifyAuth, details);
+router.get('/details', details);
 router.post('/resetPasssword', resetPasssword);
 router.post('/addProduct', insertProduct);
 
