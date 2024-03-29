@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS Customer(
     username VARCHAR(255) UNIQUE,
     phone_no VARCHAR(255),
     image_url VARCHAR(255),
+    isVerified BOOLEAN DEFAULT False,
+    emailToken VARCHAR(255),
     isActive BOOLEAN DEFAULT TRUE,
     salt VARCHAR(255) NOT NULL,
     address_id VARCHAR(255),
@@ -53,7 +55,7 @@ CREATE TABLE IF NOT EXISTS CustomerOrder(
 const createProductTable = `
 CREATE TABLE IF NOT EXISTS Product(
     prod_id VARCHAR(255) NOT NULL PRIMARY KEY,
-    prod_type VARCHAR(255),
+    prod_type VARCHAR(255) UNIQUE,
     icon_url VARCHAR(255),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -114,21 +116,7 @@ CREATE TABLE IF NOT EXISTS Delivery(
 
 const dropTable = (tableName) => `DROP TABLE IF EXISTS ${tableName};`;
 
-const insertSignup = `insert into Customer(cus_id, fullname, email, userpassword, salt) values(?,?,?,?,?)`;
 
-const checkEmailLogin = `select * from Customer where email = ?`;
-
-const updateLogin = "update Customer set userpassword = ?, salt = ? where email = ?";
-
-const getUserByID = "select * from Customer where cus_id = ?";
-
-// Products
-
-const pushProduct =  "insert into Product(prod_id, prod_type, icon_url) values(?,?,?)"
-
-// const getAllProducts = 
-
-const pushServices =  "insert into Services(service_id, service_type, price) values(?,?)"
 
 module.exports = {
     createAdminTable,
@@ -141,11 +129,5 @@ module.exports = {
     createOrderDetailsTable,
     createDeliveryModeTable,
     createDeliveryTable,
-    dropTable,
-    insertSignup,
-    checkEmailLogin,
-    updateLogin,
-    getUserByID,
-    pushProduct,
-    pushServices
+
 };

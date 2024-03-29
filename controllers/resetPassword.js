@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const { connectDB, runQuery } = require("../database/db.config");
-const { checkEmailLogin, updateLogin } = require("../database/sqlcommands");
+const { checkEmailLogin, updateLogin } = require("../database/customers.sqlcommand");
 const { authpassword, hash } = require("../helper/authentication");
 const ErrorResponse = require("../helper/errorResponse");
 

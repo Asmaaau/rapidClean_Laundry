@@ -1,16 +1,28 @@
 const express = require('express')
 const router = express.Router();
+
 const { resetPasssword } = require('../controllers/resetPassword')
 const {verifyAuth} = require('../middlewares/userAUTH')
-const { login, signup } = require('../controllers/auth.controllers')
+const { login, signup, verifyUserEmail } = require('../controllers/auth.controllers')
 const { details } = require('../controllers/users')
-const {insertProduct} = require('../controllers/product.controllers')
+const {insertProduct, getAllProducts, getAProduct} = require('../controllers/product.controllers')
+const {getCustomerID} = require('../controllers/customers.controllers')
 
-router.post('/signup', signup);
-router.get('/login', login);
-// router.get('/details',verifyAuth, details);
-router.get('/details', details);
-router.post('/resetPasssword', resetPasssword);
-router.post('/addProduct', insertProduct);
+
+// Users Routes
+router.post('/user/register', signup);
+router.get('/user/login', login);
+router.get('/user/verify-email', verifyUserEmail);
+router.get('/user/details',verifyAuth, details);
+// router.get('/details', details);
+router.post('/user/resetPasssword', resetPasssword);
+
+// customers routes
+router.get('/user/getCustomerID/:cus_id', getCustomerID)
+
+// Products Routes
+router.post('/product/addProduct', insertProduct);
+router.get('/product/getProducts', getAllProducts);
+router.get('/product/getProductID/:id', getAProduct);
 
 module.exports = {router}

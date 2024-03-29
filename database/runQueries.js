@@ -40,7 +40,7 @@ const createTables = async (req, res) => {
                 connection.query(createDeliveryModeTable);
                 connection.query(createDeliveryTable);
                 connection.release();
-                console.log("Tables created successfully");
+                // console.log("Tables created successfully");
             } catch (error) {
                 console.error("Error creating tables:", error);
                 connection.release();

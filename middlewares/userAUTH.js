@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const ErrorResponse = require("../helper/errorResponse");
-const { getUserByID } = require("../database/sqlcommands");
+const { geCusByID } = require("../database/customers.sqlcommand");
 const { connectDB, runQuery } = require("../database/db.config");
 
 const verifyAuth = async (req, res, next) => {
@@ -37,7 +37,7 @@ const verifyAuth = async (req, res, next) => {
       ]);
     } else {
       //get user by id
-      checkUserId = await runQuery(connection, getUserByID, [decoded.userid]);
+      checkUserId = await runQuery(connection, geCusByID, [decoded.userid]);
     }
 
     //     console.log(checkUserId);
@@ -45,6 +45,8 @@ const verifyAuth = async (req, res, next) => {
     if (checkUserId.length === 0) {
       return next(new ErrorResponse("Unauthorized user", 401));
     }
+
+    
 
     // add req.user
 

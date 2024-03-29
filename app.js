@@ -23,14 +23,14 @@ const app = express()
 app.use(cors())     //should be the first middleware
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
-app.use('/', router)
+app.use('/api', router)
 
 
 app.use(errorHandler)   //should be the last middleware
 
 
 
-const port = process.env.PORT || 4001
+const port = process.env.PORT || 5001
 
 
 

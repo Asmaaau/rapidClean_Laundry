@@ -15,11 +15,18 @@ require('dotenv').config()
 
 const connect = mysql.createPool({
     connectionLimit: 10,
-    host: "b4trtxlsvptabfoori7i-mysql.services.clever-cloud.com",
-    user: "usyapkvtfaqz4epu",
-    password: "7q3ShvKcld98xaE1n4p7",
-    database: "b4trtxlsvptabfoori7i"
+    host: "localhost",
+    user: "root",
+    password: "heavenfreak11",
+    database: "rapid_clean"
 })
+// const connect = mysql.createPool({
+//     connectionLimit: 10,
+//     host: "b4trtxlsvptabfoori7i-mysql.services.clever-cloud.com",
+//     user: "usyapkvtfaqz4epu",
+//     password: "7q3ShvKcld98xaE1n4p7",
+//     database: "b4trtxlsvptabfoori7i"
+// })
 
 
 const connectDB = async(req, res) => {
