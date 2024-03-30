@@ -1,4 +1,3 @@
-const ErrorResponse = require("../helper/errorResponse");
 const { createMailTransporter } = require("./createMailTransporter");
 
 exports.sendMail = async (options) => {

@@ -1,18 +1,12 @@
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const { connectDB, runQuery } = require("../database/db.config");
-const {
-  insertSignup,
-  updateVerify,
-} = require("../database/customers.sqlcommand");
-const {
-  checkEmailLogin,
-  checkEmailToken,
-} = require("../database/customers.sqlcommand");
+const { insertSignup, updateVerify} = require("../database/customers.sqlcommand");
+const { checkEmailLogin, checkEmailToken } = require("../database/customers.sqlcommand");
 const ErrorResponse = require("../helper/errorResponse");
 const { authpassword, hash, genToken } = require("../helper/authentication");
-const { sendMail } = require("../utils/sendVerificationMail");
+const { sendMail } = require("../utils/sendMail");
+
+
 
 const signup = async (req, res, next) => {
   // generate a random id using uuid
@@ -73,7 +67,8 @@ const signup = async (req, res, next) => {
     ]);
 
     const options = {
-      from: "kharchiee@outlook.com",
+      // from: "kharchiee@outlook.com",
+      from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
       to: credentials.email,
       subject: "Verify your email...",
       html: `<h1><b>Hello ${credentials.fullname} 👋,</b></h1>
