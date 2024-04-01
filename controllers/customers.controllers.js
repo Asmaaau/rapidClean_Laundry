@@ -33,3 +33,21 @@ exports.getCustomerID = async(req, res, next) => {
           return next(err)
      }
 }
+
+exports.getAllCustomers = async (req, res, next) => {
+   const connection = await connectDB();
+   connection.query(getAllCustomer, (err, result) => {
+     connection.release();
+ 
+     if (err) {
+       console.log(err)
+       return next(new ErrorResponse("Cannot Get Customers", 404))
+     }
+     else {
+       return res.status(200).json({
+         status: true,
+         data: result
+       })
+     }
+   })
+ };
