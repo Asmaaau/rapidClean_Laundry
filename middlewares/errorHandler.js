@@ -6,15 +6,19 @@ module.exports = errorHandler = (err, req, res, next) => {
 
   console.log(error)
 
-  // handle duplicate cases based on sql error no.
-  if (error.errno === 1062) {
+  // handle duplicate cases based on sql error no. and message
+  if (error.errno === 1062 && error.sqlMessage.includes("Customer.email")) {
     error.message = "Email already exist"
+    error.statusCode = 401
+  }
+  if (error.errno === 1062 && error.sqlMessage.includes("Product.prod_type")) {
+    error.message = "Product already exist"
     error.statusCode = 401
   }
 
   //  send response to user
   res.status(error.statusCode || 500).json({
     status: false,
-    message: error.message || "server error",
+    message: error.message || "Server error",
 });
 };

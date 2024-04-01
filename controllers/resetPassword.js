@@ -49,8 +49,8 @@ const resetPasssword = async (req, res, next) => {
       from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
       to: credentials.email,
       subject: "Password Reset Request...",
-      html: `<h1><b>Hello ${checkEmail[0].fullname} 👋,</b></h1>
-                <p>Use the OTP below to reset your Rapid Clean password: </p>
+      html: `<h1><b>Hello ${checkEmail[0].fullname.split(' ')[0]} 👋,</b></h1>
+                <p>Use the OTP below to reset your Rapid Clean account password: </p>
                <h2><b>${otp}</b></h2>
                 <p>This OTP will remain valid for 10 minutes. If you have not verified your email address by then, you will have to resend the request.</p>
                 `,
