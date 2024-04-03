@@ -74,7 +74,7 @@ const signup = async (req, res, next) => {
       html: `<h1><b>Hello ${credentials.fullname} 👋,</b></h1>
                 <p>Verify your email by clicking the button below,<br>
                 Then log in using your email and password you set</p>
-                <a href='http://localhost:5000/api/user/verify-email?emailToken=${emailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
+                <a href='https://rapidclean-laundry.onrender.com/api/user/verify-email?emailToken=${emailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
                 <p>This link will remain valid for 1 day. If you have not verified your email address by then, you will have to create another account.</p>
                 `,
     };
