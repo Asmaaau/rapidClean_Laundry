@@ -20,6 +20,8 @@ require('dotenv').config()
 //     password: "heavenfreak11",
 //     database: "rapid_clean"
 // })
+
+
 const connect = mysql.createPool({
     connectionLimit: 10,
     host: "b4trtxlsvptabfoori7i-mysql.services.clever-cloud.com",

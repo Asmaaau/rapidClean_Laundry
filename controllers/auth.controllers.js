@@ -1,12 +1,17 @@
 const { v4: uuidv4 } = require("uuid");
 const { connectDB, runQuery } = require("../database/db.config");
-const { insertSignup, updateVerify} = require("../database/customers.sqlcommand");
-const { checkEmailLogin, checkEmailToken } = require("../database/customers.sqlcommand");
+const {
+  insertSignup,
+  updateVerify,
+  updateEmailToken,
+} = require("../database/customers.sqlcommand");
+const {
+  checkEmailLogin,
+  checkEmailToken,
+} = require("../database/customers.sqlcommand");
 const ErrorResponse = require("../helper/errorResponse");
 const { authpassword, hash, genToken } = require("../helper/authentication");
 const { sendMail } = require("../utils/sendMail");
-
-
 
 const signup = async (req, res, next) => {
   // generate a random id using uuid
@@ -74,7 +79,7 @@ const signup = async (req, res, next) => {
       html: `<h1><b>Hello ${credentials.fullname} 👋,</b></h1>
                 <p>Verify your email by clicking the button below,<br>
                 Then log in using your email and password you set</p>
-                <a href='https://rapidclean-laundry.onrender.com/api/user/verify-email?emailToken=${emailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
+                <a href='${req.protocol}://${req.get("host")}/api/user/verify-email?emailToken=${emailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
                 <p>This link will remain valid for 1 day. If you have not verified your email address by then, you will have to create another account.</p>
                 `,
     };
@@ -202,4 +207,52 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { login, signup, verifyUserEmail };
+const resendVerification = async (req, res, next) => {
+  try {
+    // since the user won't input it again, the frontend would have to send it
+    const { email, fullname } = req.body;
+
+    // create a connection, await is used beacuse it is a promise
+    const connection = await connectDB();
+
+    // create a new emailToken using the hash() method
+    const newEmailToken = hash();
+
+    // use the function created for running a query to insert the credentials gotten from the request into the database
+    const result = await runQuery(connection, updateEmailToken, [
+      newEmailToken,
+      email,
+    ]);
+
+    console.log(result);
+
+
+
+    const options = {
+      // from: "kharchiee@outlook.com",
+      from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
+      to: email,
+      subject: "Verify your email...",
+      html: `<h1><b>Hello ${fullname.split(' ')[0]} 👋,</b></h1>
+                <p>Verify your email by clicking the button below,<br>
+                Then log in using your email and password you set</p>
+                <a href='https://rapidclean-laundry.onrender.com/api/user/verify-email?emailToken=${newEmailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
+                <p>This link will remain valid for 1 day. If you have not verified your email address by then, you will have to create another account.</p>
+                `,
+    };
+
+    await sendMail(options);
+
+
+    // send a successful message to the client sde
+    return res.status(200).json({
+      status: true,
+      message: "Email Resent",
+    });
+  } catch (err) {
+    // handle errors using sql error message
+    return next(err);
+  }
+};
+
+module.exports = { login, signup, verifyUserEmail, resendVerification };

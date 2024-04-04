@@ -2,10 +2,11 @@ const express = require('express')
 const router = express.Router();
 const { resetPasssword } = require('../controllers/resetPassword')
 const {verifyAuth} = require('../middlewares/userAUTH')
-const { login, signup, verifyUserEmail } = require('../controllers/auth.controllers')
+const { login, signup, verifyUserEmail, resendVerification } = require('../controllers/auth.controllers')
 const { details } = require('../controllers/users')
 const {insertProduct, getAllProducts, getAProduct} = require('../controllers/product.controllers')
 const {getCustomerID, getAllCustomers} = require('../controllers/customers.controllers')
+const { insertServices } = require('../controllers/services.controllers')
 
 
 // Users Routes
@@ -15,6 +16,7 @@ router.get('/user/verify-email', verifyUserEmail);
 router.get('/user/details',verifyAuth, details);
 // router.get('/details', details);
 router.post('/user/resetPasssword', resetPasssword);
+router.post('/user/resend-verification', resendVerification);
 
 // customers routes
 router.get('/user/getCustomerID/:cus_id', getCustomerID)
@@ -24,5 +26,10 @@ router.get('/user/getCustomers', getAllCustomers)
 router.post('/product/addProduct', insertProduct);
 router.get('/product/getProducts', getAllProducts);
 router.get('/product/getProductID/:id', getAProduct);
+
+
+// Services Routes
+router.post('/services/insert-service', insertServices);
+
 
 module.exports = {router}

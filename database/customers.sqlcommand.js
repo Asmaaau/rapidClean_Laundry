@@ -15,6 +15,8 @@ const getCusByID = "select * from Customer where cus_id = ?";
 
 const getAllCustomer = "select * from Customer";
 
+const updateEmailToken = "update Customer set emailToken = ? where email = ?"
+
 module.exports = {
      insertSignup,
     checkEmailLogin,
@@ -23,4 +25,5 @@ module.exports = {
     getCusByID,
     updateVerify,
     getAllCustomer,
+    updateEmailToken,
 }

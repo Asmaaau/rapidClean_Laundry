@@ -1,5 +1,5 @@
 const { connectDB, runQuery } = require('../database/db.config')
-const {pushServices} = require('../database/sqlcommands')
+const {pushServices} = require('../database/products.sqlcommand')
 const { generateShorterID } = require('../helper/authentication')
 
 exports.insertServices = async(req, res, next) => {

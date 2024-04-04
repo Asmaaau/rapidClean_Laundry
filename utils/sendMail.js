@@ -11,9 +11,16 @@ exports.sendMail = async (options) => {
     html: options.html
   };
 //   transporter.sendMail(mailOptions)
-  transporter.sendMail(mailOptions);
+  transporter.sendMail(mailOptions, (err, info)=>{
+    if(err){
+      console.log(err)
+    }
+    else {
+      console.log("Email Verification Sent")
+    }
+  });
 
-  console.log("Email Verification Sent")
+  // console.log("Email Verification Sent")
 };
 
 // exports.sendVerificationMail = (user, emailToken, next) => {
