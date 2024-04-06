@@ -13,7 +13,7 @@ const {router} = require('./routes/routes')
 
 
 config.config({path: "./config/config.env"})
-
+// console.log(process.env);
 
 // create express object
 const app = express()

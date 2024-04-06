@@ -45,7 +45,7 @@ const connectDB = async(req, res) => {
     })
 }
 
-const runQuery = (connection, sql_command, values) => {
+const runQuery = async(connection, sql_command, values) => {
     return new Promise((resolve, reject)=> {
         connection.query(sql_command, values, (err, result)=> {
             connection.release();

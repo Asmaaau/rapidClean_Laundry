@@ -14,6 +14,6 @@ exports.createMailTransporter = () => {
      return transporter;
 }
 
-// smtp key - xsmtpsib-95cdf20c07bfbf3012464c5c241b6ee70828129059e749e7b2f92349d31c3b9e-gVUSJWtTOK5pXG1H
+// brevo smtp key - xsmtpsib-95cdf20c07bfbf3012464c5c241b6ee70828129059e749e7b2f92349d31c3b9e-gVUSJWtTOK5pXG1H
 // console.log( process.env.EMAIL_ADDRESS)
 // console.log(process.env.EMAIL_PASS);

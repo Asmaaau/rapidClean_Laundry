@@ -1,14 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const { connectDB, runQuery } = require("../database/db.config");
-const {
-  insertSignup,
-  updateVerify,
-  updateEmailToken,
-} = require("../database/customers.sqlcommand");
-const {
-  checkEmailLogin,
-  checkEmailToken,
-} = require("../database/customers.sqlcommand");
+const { insertSignup, updateVerify, updateEmailToken, checkEmailToken, checkEmailLogin } = require("../database/auth.sqlcommand");
 const ErrorResponse = require("../helper/errorResponse");
 const { authpassword, hash, genToken } = require("../helper/authentication");
 const { sendMail } = require("../utils/sendMail");
@@ -19,6 +11,8 @@ const signup = async (req, res, next) => {
 
   // create a salt using the hash function created in the helper file
   const salt = hash();
+
+  let checkUser;
 
   try {
     // get the users credential from the request
@@ -55,8 +49,23 @@ const signup = async (req, res, next) => {
       );
     }
 
-    // hash the passwprd entered using the function created to hash
+    // hash the password entered using the function created to hash
     credentials.userpassword = authpassword(salt, req.body.userpassword);
+
+
+      // run a query to check if the email enetered already exists in the database but isVerified is false  
+      checkUser = await runQuery(connection, checkEmailLogin, [
+        credentials.email,
+      ]);
+
+      // if(checkUser.length > 0 && checkUser[0].email === credentials.email && checkUser[0].isVerified === false){
+      //   await resendVerification()
+      //   // send a successful message to the client sde
+      //   return res.status(200).json({
+      //     status: true,
+      //     message: "Account created successfully",
+      //   });
+      // }
 
     // create the emailToken using the hash() method
     const emailToken = hash();
@@ -76,7 +85,7 @@ const signup = async (req, res, next) => {
       from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
       to: credentials.email,
       subject: "Verify your email...",
-      html: `<h1><b>Hello ${credentials.fullname} 👋,</b></h1>
+      html: `<h1><b>Hello ${credentials.fullname.split(' ')[0]} 👋,</b></h1>
                 <p>Verify your email by clicking the button below,<br>
                 Then log in using your email and password you set</p>
                 <a href='${req.protocol}://${req.get("host")}/api/user/verify-email?emailToken=${emailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
@@ -84,17 +93,7 @@ const signup = async (req, res, next) => {
                 `,
     };
 
-    //  const checkToken = await runQuery(connection, checkEmailToken, [
-    //   emailToken,
-    // ]);
-
     await sendMail(options);
-
-    // if(!emailToken){
-    //   return next(new ErrorResponse("Token not found...", 402))
-    // }
-
-    // console.log(checkToken[0].emailToken)
 
     // send a successful message to the client sde
     return res.status(200).json({
@@ -102,8 +101,22 @@ const signup = async (req, res, next) => {
       message: "Account created successfully",
     });
   } catch (err) {
+    
+    if (err.errno === 1062 && err.sqlMessage.includes("email")) {
+      if(checkUser[0].isVerified === true){
+        return next(new ErrorResponse("hello error", 401));
+      } else{
+        await resendVerification()
+        // send a successful message to the client sde
+        return res.status(200).json({
+          status: true,
+          message: "Account created successfully",
+        });
+      }
+    } else {
     // handle errors using sql error message
     return next(err);
+    }
   }
 };
 
@@ -210,7 +223,7 @@ const login = async (req, res, next) => {
 const resendVerification = async (req, res, next) => {
   try {
     // since the user won't input it again, the frontend would have to send it
-    const { email, fullname } = req.body;
+    const { email } = req.body;
 
     // create a connection, await is used beacuse it is a promise
     const connection = await connectDB();
@@ -218,14 +231,17 @@ const resendVerification = async (req, res, next) => {
     // create a new emailToken using the hash() method
     const newEmailToken = hash();
 
+    const checkEmail = await runQuery(connection, checkEmailLogin, [email])
+
+    if(!checkEmail){
+      return next(new ErrorResponse("Invalid Email", 401))
+    }
+
     // use the function created for running a query to insert the credentials gotten from the request into the database
     const result = await runQuery(connection, updateEmailToken, [
       newEmailToken,
       email,
     ]);
-
-    console.log(result);
-
 
 
     const options = {
@@ -233,7 +249,7 @@ const resendVerification = async (req, res, next) => {
       from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
       to: email,
       subject: "Verify your email...",
-      html: `<h1><b>Hello ${fullname.split(' ')[0]} 👋,</b></h1>
+      html: `<h1><b>Hello ${checkEmail[0].fullname.split(' ')[0]} 👋,</b></h1>
                 <p>Verify your email by clicking the button below,<br>
                 Then log in using your email and password you set</p>
                 <a href='https://rapidclean-laundry.onrender.com/api/user/verify-email?emailToken=${newEmailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
@@ -243,7 +259,6 @@ const resendVerification = async (req, res, next) => {
 
     await sendMail(options);
 
-
     // send a successful message to the client sde
     return res.status(200).json({
       status: true,
@@ -252,7 +267,11 @@ const resendVerification = async (req, res, next) => {
   } catch (err) {
     // handle errors using sql error message
     return next(err);
+    // console.log(err)
   }
 };
 
 module.exports = { login, signup, verifyUserEmail, resendVerification };
+
+
+// notifications stored in the database

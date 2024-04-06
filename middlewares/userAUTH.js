@@ -46,8 +46,6 @@ const verifyAuth = async (req, res, next) => {
       return next(new ErrorResponse("Unauthorized user", 401));
     }
 
-    
-
     // add req.user
 
     req.user = checkUserId[0];
@@ -59,5 +57,4 @@ const verifyAuth = async (req, res, next) => {
     return next(err);
   }
 };
-
 module.exports = { verifyAuth };
