@@ -21,6 +21,8 @@ const app = express()
 
 // middleware
 app.use(cors())     //should be the first middleware
+
+app.options('*', cors());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 app.use('/api', router)
