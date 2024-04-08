@@ -20,7 +20,13 @@ const app = express()
 
 
 // middleware
-app.use(cors())     //should be the first middleware
+
+// make sure fix this later....temporary fix
+app.use(cors(
+    {
+        origin: 'http://localhost:5173'
+    }
+))     //should be the first middleware
 
 app.options('*', cors());
 app.use(bodyParser.json())
@@ -31,10 +37,7 @@ app.use('/api', router)
 app.use(errorHandler)   //should be the last middleware
 
 
-
 const port = process.env.PORT || 5001
-
-
 
 
 // connect to database
