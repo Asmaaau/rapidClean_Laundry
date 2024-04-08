@@ -18,17 +18,20 @@ config.config({path: "./config/config.env"})
 // create express object
 const app = express()
 
+const corsOptions ={
+    origin: '*', 
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
+
 
 // middleware
 
 // make sure fix this later....temporary fix
-app.use(cors(
-    {
-        origin: 'http://localhost:5173'
-    }
-))     //should be the first middleware
+// app.use(cors())     //should be the first middleware
 
-app.options('*', cors());
+// app.options('*', cors());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 app.use('/api', router)
