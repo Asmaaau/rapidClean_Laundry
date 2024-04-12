@@ -101,16 +101,14 @@ const signup = async (req, res, next) => {
       message: "Account created successfully",
     });
   } catch (err) {
-    
     if (err.errno === 1062 && err.sqlMessage.includes("email")) {
       if(checkUser[0].isVerified === true){
         return next(new ErrorResponse("hello error", 401));
       } else{
-        await resendVerification()
-        // send a successful message to the client sde
+        //direct user to resend verification email
         return res.status(200).json({
           status: true,
-          message: "Account created successfully",
+          message: "Email already in use, verify your email...",
         });
       }
     } else {

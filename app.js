@@ -32,7 +32,7 @@ const app = express()
 //     next();
 // });
 
-app.use(cors({origin: '*'}))
+// app.use(cors({origin: '*'}))
 
 
 // app.use(
@@ -42,7 +42,7 @@ app.use(cors({origin: '*'}))
 // middleware
 
 // make sure fix this later....temporary fix
-// app.use(cors())     //should be the first middleware
+app.use(cors())     //should be the first middleware
 
 // app.options('*', cors());
 app.use(bodyParser.json())

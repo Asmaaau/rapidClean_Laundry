@@ -37,3 +37,10 @@ exports.generateOTP = () => {
    return otp;
 }
 
+
+exports.generateId = (customerNumber) => {
+  // Pad the customer number with leading zeros
+  const paddedCustomerNumber = String(customerNumber).padStart(3, '0');
+  
+  return paddedCustomerNumber;
+}; 
