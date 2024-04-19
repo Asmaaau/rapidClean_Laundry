@@ -3,16 +3,16 @@ const { connectDB, runQuery } = require("../database/db.config");
 const { generateShorterID } = require("../helper/authentication");
 const ErrorResponse = require("../helper/errorResponse");
 
-exports.getCustomerID = async(req, res, next) => {
+const getCustomerID = async(req, res, next) => {
      try {
 
      //  Retrieve customer ID from request parameters
-       const { cus_id } = req.params
+       const cus_id  = req.params.id
 
        const connection = await connectDB();
 
        if(!cus_id){
-          return next(new ErrorResponse("Input an ID...", 401))
+          return next(new ErrorResponse("Select a customer...", 401))
        }
 
        const getAcustomer = await runQuery(connection, getCusByID, [ cus_id ])
@@ -34,7 +34,7 @@ exports.getCustomerID = async(req, res, next) => {
      }
 }
 
-exports.getAllCustomers = async (req, res, next) => {
+const getAllCustomers = async (req, res, next) => {
    const connection = await connectDB();
    connection.query(getAllCustomer, (err, result) => {
      connection.release();
@@ -51,3 +51,7 @@ exports.getAllCustomers = async (req, res, next) => {
      }
    })
  };
+
+
+
+ module.exports = {getAllCustomers, getCustomerID}

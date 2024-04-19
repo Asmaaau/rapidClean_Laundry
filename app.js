@@ -5,8 +5,7 @@ const config = require('dotenv');
 const bodyParser = require('body-parser');
 const {connectDB} = require('./database/db.config');
 const {createTables, dropped} = require('./database/runQueries')
-const errorHandler = require('./middlewares/errorHandler')
-
+const errorHandler = require('./middlewares/errorHandler');
 
 // impport routes
 const {router} = require('./routes/routes')
@@ -53,7 +52,7 @@ app.use('/api', router)
 app.use(errorHandler)   //should be the last middleware
 
 
-const port = process.env.PORT || 5001
+const port = process.env.PORT || 5001;
 
 
 // connect to database
@@ -75,15 +74,27 @@ connectDB().then(()=>{
 // createTables()
 // it keeps running regardless
 
-// app.use('/', createTables) 
+// app.use('/', createTables)
 
 // createTables()
 
 createTables().then(() => {
-    // console.log("Tables created successfully");
+    console.log("Tables created successfully");
 }).catch((err) => {
     console.error("Error creating tables:", err);
     process.exit(1);
 }); 
 
 // dropped()
+
+// const crypto = require("crypto");
+
+// const hash = () => {
+
+//     const num = crypto.randomBytes(64).toString("hex");
+//     const number = parseInt(num)
+
+//     return number;
+// }
+
+// console.log(hash()); 

@@ -1,6 +1,6 @@
 const createCustomerTable = `
 CREATE TABLE IF NOT EXISTS Customer(
-    cus_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    cus_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     fullname VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     userpassword VARCHAR(255) NOT NULL,
@@ -11,18 +11,19 @@ CREATE TABLE IF NOT EXISTS Customer(
     emailToken VARCHAR(255),
     isActive BOOLEAN DEFAULT TRUE,
     salt VARCHAR(255) NOT NULL,
-    address_id VARCHAR(255),
+    address_id INT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );`;
 
-// create salt and add NOT NULL to the salt column
+// cus_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+// cus_id VARCHAR(255) NOT NULL PRIMARY KEY,
 
 const createAddressTable = `
 CREATE TABLE IF NOT EXISTS Address(
-    address_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    address_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     state VARCHAR(255) NOT NULL,
     lga VARCHAR(255) NOT NULL,
     house_address VARCHAR(255) NOT NULL
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS Address(
 
 const createAdminTable = `
 CREATE TABLE IF NOT EXISTS Admin(
-    admin_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    admin_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     fullname VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     userpassword VARCHAR(255) NOT NULL,
@@ -38,6 +39,8 @@ CREATE TABLE IF NOT EXISTS Admin(
     image_url VARCHAR(255),
     isActive BOOLEAN DEFAULT TRUE,
     salt VARCHAR(255) NOT NULL,
+    isVerified BOOLEAN DEFAULT False,
+    emailToken VARCHAR(255),
     level VARCHAR(255) NOT NULL,
     userid VARCHAR(255) NOT NULL
 );`;
@@ -46,10 +49,16 @@ const createOrderTable = `
 CREATE TABLE IF NOT EXISTS CustomerOrder(
     order_id VARCHAR(255) NOT NULL PRIMARY KEY,
     order_status VARCHAR(255),
-    cus_id VARCHAR(255) NOT NULL,
+    cus_id INT NOT NULL,
     FOREIGN KEY (cus_id) REFERENCES Customer(cus_id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);`;
+
+const createCategoryTable = `
+CREATE TABLE IF NOT EXISTS Category(
+    cat_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cat_type VARCHAR(255)
 );`;
 
 const createProductTable = `
@@ -57,13 +66,16 @@ CREATE TABLE IF NOT EXISTS Product(
     prod_id VARCHAR(255) NOT NULL PRIMARY KEY,
     prod_type VARCHAR(255) UNIQUE,
     icon_url VARCHAR(255),
+    cat_id INT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (cat_id) REFERENCES Category(cat_id)
 );`;
 
 const createServicesTable = `
 CREATE TABLE IF NOT EXISTS Services(
-    service_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    service_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     prod_id VARCHAR(255),
     service_type VARCHAR(255),
     price VARCHAR(255),
@@ -73,7 +85,7 @@ CREATE TABLE IF NOT EXISTS Services(
 
 const createExtrasTable = `
 CREATE TABLE IF NOT EXISTS Extras(
-    extras_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    extras_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     extras_type VARCHAR(255),
     description VARCHAR(255),
     price VARCHAR(255)
@@ -85,8 +97,8 @@ CREATE TABLE IF NOT EXISTS OrderDetails(
     total_sum DECIMAL(10,2),
     isDeleted  BOOLEAN DEFAULT FALSE,
     quantity INT,
-    extras_id VARCHAR(255),
-    service_id VARCHAR(255),
+    extras_id INT,
+    service_id INT,
     prod_id VARCHAR(255),
     order_id VARCHAR(255),
 
@@ -98,21 +110,24 @@ CREATE TABLE IF NOT EXISTS OrderDetails(
 
 const createDeliveryModeTable = `
 CREATE TABLE IF NOT EXISTS OrderMode(
-    orderMode_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    orderMode_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     orderMode VARCHAR(255),
-    hint VARCHAR(255)
+    spec_instruction VARCHAR(255)
 );`;
 
 const createDeliveryTable = `
 CREATE TABLE IF NOT EXISTS Delivery(
-    delivery_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    delivery_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     order_id VARCHAR(255),
-    orderMode_id VARCHAR(255),
+    orderMode_id INT,
     price VARCHAR(255),
+    scheduled_time DATE,
 
     FOREIGN KEY (order_id) REFERENCES CustomerOrder(order_id),
     FOREIGN KEY (orderMode_id) REFERENCES OrderMode(orderMode_id)
 );`;
+
+
 
 const dropTable = (tableName) => `DROP TABLE IF EXISTS ${tableName};`;
 
@@ -129,5 +144,6 @@ module.exports = {
     createOrderDetailsTable,
     createDeliveryModeTable,
     createDeliveryTable,
-
+    createCategoryTable,
+    dropTable
 };

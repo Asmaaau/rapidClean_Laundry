@@ -1,4 +1,4 @@
-const { pushProduct, getAllProds, getProdByID } = require("../database/products.sqlcommand");
+const { pushProduct, getAllProds, getProdByID, productByCat, updateProduct, deleteProduct, deleteProductandServices } = require("../database/products.sqlcommand");
 const { connectDB, runQuery } = require("../database/db.config");
 const { generateShorterID } = require("../helper/authentication");
 const ErrorResponse = require("../helper/errorResponse");
@@ -13,11 +13,7 @@ exports.insertProduct = async (req, res, next) => {
 
     // deconstructing
     const { prod_type, icon_url } = req.body;
-    // prod_id,
-    // prod_type: req.body.prod_type,
-    // icon_url: req.body.icon_url
 
-    // const makeProduct = await runQuery(connection, pushProduct, [products.prod_id, products.prod_type, products.icon_url])
     const makeProduct = await runQuery(connection, pushProduct, [
       prod_id,
       prod_type,
@@ -61,7 +57,7 @@ exports.getAProduct = async (req, res, next) => {
     const connection = await connectDB();
 
     if (!prod_id) {
-      return next(new ErrorResponse("Input an ID...", 401))
+      return next(new ErrorResponse("Select a product...", 401))
     }
 
     const getAProduct = await runQuery(connection, getProdByID, [prod_id])
@@ -81,8 +77,131 @@ exports.getAProduct = async (req, res, next) => {
   }
 }
 
+exports.getProducstByCategory = async (req, res, next) => {
+  try {
+    const cat_id = req.params.id
+
+    const connection = await connectDB();
+
+    if (!cat_id) {
+      return next(new ErrorResponse("Select a category...", 401))
+    }
+
+    const getProducts = await runQuery(connection, productByCat, [cat_id])
+
+    if (getProducts.length === 0) {
+      return next(new ErrorResponse(`No Products in category ${cat_id} yet`, 404))
+    }
+
+
+  } catch (err) {
+    return next(err)
+  }
+
+}
 
 exports.updateAProduct = async (req, res, next) => {
+  try {
+
+    const { prod_type, price, cat_id } = req.body
+    const prod_id = req.params.id
+
+    if (!prod_type || !price || !cat_id) {
+      return next(new ErrorResponse("Select at least one field to update", 401))
+    }
+
+    // create connection to database
+    const connection = await connectDB();
+
+    // update product using query
+    const updateAProduct = await runQuery(connection, updateProduct, [
+      prod_type,
+      price,
+      prod_id
+    ]);
+
+    // send successful updated message to client side
+    return res
+      .status(200)
+      .json({
+        status: true,
+        message: "Product has been updated"
+      });
+  } catch (err) {
+
+    // handle error
+    console.error("Error during update:", err);
+    return next(err);
+  }
+};
+
+// exports.deleteProduct = async (req, res, next) => {
+//   try {
+
+//     const prod_id = req.params.id
+
+//     if (!prod_id) {
+//       return next(new ErrorResponse("Select Product to delete", 401))
+//     }
+
+//     // create connection to database
+//     const connection = await connectDB();
+
+//     // delete product using query
+//     const deleteAProduct = await runQuery(connection, deleteProduct, [
+//       prod_id
+//     ]);
+
+//     // send successful deleted message to client side
+//     return res
+//       .status(200)
+//       .json({
+//         status: true,
+//         message: "Product has been deleted"
+//       });
+//   } catch (err) {
+
+//     // handle error
+//     console.error("Error during deletion:", err);
+//     return next(err);
+//   }
+// };
+
+
+exports.deleteProduct = async (req, res, next) => {
+  try {
+
+    const prod_id = req.params.id
+
+    if (!prod_id) {
+      return next(new ErrorResponse("Select Product to delete", 401))
+    }
+
+    // create connection to database
+    const connection = await connectDB();
+
+    // delete product using query
+    const deleteAProduct = await runQuery(connection, deleteProductandServices, [
+      prod_id
+    ]);
+
+    // send successful deleted message to client side
+    return res
+      .status(200)
+      .json({
+        status: true,
+        message: "Product has been deleted"
+      });
+  } catch (err) {
+
+    // handle error
+    console.error("Error during deletion:", err);
+    return next(err);
+  }
+};
+
+
+exports.deleteAllProducts = async (req, res, next) => {
 
 }
 

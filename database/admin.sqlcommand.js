@@ -1,4 +1,4 @@
-const insertSignup = `insert into Customer( fullname, email, userpassword, salt, emailToken) values(?,?,?,?,?)`;
+const insertSignup = `insert into Admin( fullname, email, userpassword, salt, emailToken) values(?,?,?,?,?)`;
 
 const checkEmailLogin = `select * from Customer where email = ?`;
 

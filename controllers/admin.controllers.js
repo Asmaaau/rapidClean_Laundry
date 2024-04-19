@@ -7,10 +7,6 @@ const { sendMail } = require("../utils/sendMail");
 
 const signup = async (req, res, next) => {
 
-  // generate a random id using function created
-  // const cus_id = uuidv4();
-  // const cus_id = generateId();
-
   // create a salt using the hash function created in the helper file
   const salt = hash();
 
@@ -18,11 +14,8 @@ const signup = async (req, res, next) => {
 
   try {
     // get the users credential from the request
-    const credentials = {
-      fullname: req.body.fullname,
-      email: req.body.email,
-      userpassword: req.body.userpassword,
-    };
+    const { fullname, email, userpassword } = req.body
+
 
     // create a connection, await is used beacuse it is a promise
     const connection = await connectDB();
@@ -32,17 +25,17 @@ const signup = async (req, res, next) => {
       /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
     // check that the email entered corresponds with the regex format set
-    if (!validEmailRegex.test(credentials.email)) {
+    if (!validEmailRegex.test(email)) {
       return next(new ErrorResponse("Invalid email format", 400));
     }
 
     // check that the password entered meets the requirements
     if (
       !(
-        credentials.userpassword.length >= 8 &&
-        /[A-Z]/.test(credentials.userpassword) &&
-        /[a-z]/.test(credentials.userpassword) &&
-        /[0-9]/.test(credentials.userpassword)
+        userpassword.length >= 8 &&
+        /[A-Z]/.test(userpassword) &&
+        /[a-z]/.test(userpassword) &&
+        /[0-9]/.test(userpassword)
       )
     ) {
       return next(
@@ -51,12 +44,12 @@ const signup = async (req, res, next) => {
     }
 
     // hash the password entered using the function created to hash
-    credentials.userpassword = authpassword(salt, req.body.userpassword);
+    userpassword = authpassword(salt, req.body.userpassword);
 
 
     // run a query to check if the email enetered already exists in the database but isVerified is false  
     checkUser = await runQuery(connection, checkEmailLogin, [
-      credentials.email,
+      email,
     ]);
 
     // create the emailToken using the hash() method
@@ -64,9 +57,9 @@ const signup = async (req, res, next) => {
 
     // use the function created for running a query to insert the credentials gotten from the request into the database
     const result = await runQuery(connection, insertSignup, [
-      credentials.fullname,
-      credentials.email,
-      credentials.userpassword,
+      fullname,
+      email,
+      userpassword,
       salt,
       emailToken,
     ]);
@@ -76,9 +69,9 @@ const signup = async (req, res, next) => {
     const options = {
       // from: "kharchiee@outlook.com",
       from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
-      to: credentials.email,
+      to: email,
       subject: "Verify your email...",
-      html: `<h1><b>Hello ${credentials.fullname.split(' ')[0]} 👋,</b></h1>
+      html: `<h1><b>Hello ${fullname.split(' ')[0]} 👋,</b></h1>
                 <p>Verify your email by clicking the button below,<br>
                 Then log in using your email and password you set</p>
                 <a href='http://localhost:5173/Login?emailToken=${emailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
@@ -167,10 +160,7 @@ const verifyUserEmail = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   // get credentials entered during login
-  const credentials = {
-    email: req.body.email,
-    userpassword: req.body.userpassword,
-  };
+  const { email, userpassword } = req.body
 
   try {
     // create connection to database
@@ -178,7 +168,7 @@ const login = async (req, res, next) => {
 
     // run a query to confirm the email enetered exists in the database
     const checkUser = await runQuery(connection, checkEmailLogin, [
-      credentials.email,
+      email,
     ]);
 
     // handle the case of an empty result from the query
@@ -190,7 +180,7 @@ const login = async (req, res, next) => {
     const salt = checkUser[0].salt;
 
     // hash the password entered during login using the salt retrieved from database
-    const hashedPassword = authpassword(salt, credentials.userpassword);
+    const hashedPassword = authpassword(salt, userpassword);
 
     console.log(checkUser[0].userpassword);
     console.log(hashedPassword);
@@ -216,7 +206,7 @@ const login = async (req, res, next) => {
 const resendVerification = async (req, res, next) => {
   try {
     // since the user won't input it again, the frontend would have to send it
-    const { email } = req.body;
+    const email = req.body;
 
     // create a connection, await is used beacuse it is a promise
     const connection = await connectDB();
@@ -245,7 +235,7 @@ const resendVerification = async (req, res, next) => {
       html: `<h1><b>Hello ${checkEmail[0].fullname.split(' ')[0]} 👋,</b></h1>
                 <p>Verify your email by clicking the button below,<br>
                 Then log in using your email and password you set</p>
-                <a href='http://localhost:5173/Login?emailToken=${newEmailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
+                <a href='https://rapidclean-laundry.onrender.com/api/user/verify-email?emailToken=${newEmailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
                 <p>This link will remain valid for 1 day. If you have not verified your email address by then, you will have to create another account.</p>
                 `,
     };
@@ -266,7 +256,7 @@ const resendVerification = async (req, res, next) => {
 
 const forgotPassword = async (req, res, next) => {
   try {
-    const { email } = req.body
+    const email = req.body
 
     const connection = await connectDB();
 
@@ -311,30 +301,27 @@ const forgotPassword = async (req, res, next) => {
 const resetPasssword = async (req, res, next) => {
   try {
     // get credentials
-    const credentials = {
-      email: req.body.email,
-      userpassword: req.body.userpassword,
-    };
+    const { email, userpassword } = req.body
 
     // generate a salt value using the hash function
     const salt = hash();
 
 
     // handle no password inputed
-    if (!credentials.userpassword) {
+    if (!userpassword) {
       return next(new ErrorResponse("Input a new password", 401))
     }
 
 
     //hash the new password
-    credentials.userpassword = authpassword(salt, req.body.userpassword);
+    userpassword = authpassword(salt, req.body.userpassword);
 
     // create connection to database
     const connection = await connectDB();
 
     // run query to check that email exists in database
     const checkEmail = await runQuery(connection, checkEmailLogin, [
-      credentials.email,
+      email,
     ]);
 
     // handle false result
@@ -344,9 +331,9 @@ const resetPasssword = async (req, res, next) => {
 
     // update password and salt using query
     const updatePWD = await runQuery(connection, updateLogin, [
-      credentials.userpassword,
+      userpassword,
       salt,
-      credentials.email,
+      email,
     ]);
 
     // send successful reset message to client side

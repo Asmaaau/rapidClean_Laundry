@@ -5,6 +5,8 @@ const OTP = require('otp-generator')
 
 exports.hash = () => crypto.randomBytes(64).toString("hex");
 
+// console.log(hash());
+
 exports.authpassword = (salt, password) => {
   return crypto
     .createHmac("sha256", [salt, password].join("/"))
@@ -38,9 +40,24 @@ exports.generateOTP = () => {
 }
 
 
-exports.generateId = (customerNumber) => {
-  // Pad the customer number with leading zeros
-  const paddedCustomerNumber = String(customerNumber).padStart(3, '0');
+exports.generateSpecialId = () => {
+  const uuid = uuidv4();
+    
+  // Extract the first 10 characters of the UUID
+  const shortUUID = uuid.substring(0, 13);
+
+  const addName = `RC-${shortUUID}`
+  return addName;
+};
+
+
+// exports.generateId = (customerNumber) => {
+//   // Pad the customer number with leading zeros
+//   const paddedCustomerNumber = String(customerNumber).padStart(4, '0');
+
+//   const addPrefix = `CA-${paddedCustomerNumber}`
   
-  return paddedCustomerNumber;
-}; 
+//   return addPrefix;
+// }; 
+
+// console.log(generateId(78));
