@@ -2,27 +2,34 @@ const mysql = require('mysql2');
 const createUserTable = require('./sqlcommands');
 require('dotenv').config()
 
-// const connect = mysql.createPool({
-//     connectionLimit: parseInt(process.env.DB_CONNECTIONLIMIT),
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PWD,
-//     database: process.env.DB_NAME
-// })
+const connect = mysql.createPool({
+    connectionLimit: parseInt(process.env.DB_CONNECTIONLIMIT),
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PWD,
+    database: process.env.DB_NAME
+})
 
 // console.log(process.env.DB_HOST)
 // console.log(process.env.DB_NAME)
 // console.log(typeof process.env.DB_HOST)
 
 
-const connect = mysql.createPool({
-    connectionLimit: 10,
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "rapid_clean"
-})
+// const connect = mysql.createPool({
+//     connectionLimit: 10,
+//     host: "localhost",
+//     user: "root",
+//     password: "",
+//     database: "rapid_clean"
+// })
 
+// const connect = mysql.createPool({
+//     connectionLimit: parseInt(process.env.DB_CONNECTIONLIMIT),
+//     host: process.env.LOCAL_DB_HOST,
+//     user: process.env.LOCAL_DB_USER,
+//     password: "",
+//     database: process.env.LOCAL_DB_NAME
+// })
 
 // const connect = mysql.createPool({
 //     connectionLimit: 10,
