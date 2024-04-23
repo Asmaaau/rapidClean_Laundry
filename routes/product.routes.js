@@ -6,22 +6,23 @@ const { addCategory, getACategory, getAllCategories} = require('../controllers/c
 const { insertServices } = require('../controllers/services.controllers')
 
 
-// Products Routes
+// Product POST Requests endpoints
 router.post('/addProduct', insertProduct);
-router.get('/getProducts', getAllProducts);
-router.get('/getProductID/:id', getAProduct);
+router.post('/addCategory', addCategory);
 router.post('/updateProduct', updateAProduct);
 router.post('/deleteProduct', deleteProduct);
-router.get('/setPriceList', setPriceList);
+router.post('/insert-service', insertServices);  // Services Routes
 
-// Category routes
-router.post('/addCategory', addCategory);
+
+// Product GET Requests endpoints
 router.get('/getCategory', getAllCategories);
 router.get('/getCategoryID/:id', getACategory);
 router.get('/getProductByCat', getProductByCategory);
+router.get('/getProducts', getAllProducts);
+router.get('/getProductID/:id', getAProduct);
+router.get('/setPriceList', setPriceList);
 
 
-// Services Routes
-router.post('/insert-service', insertServices);
+
 
 module.exports = router

@@ -150,5 +150,7 @@ const getAllCustomers = async (req, res, next) => {
   }
  }
 
+//  const countAll
+
 
  module.exports = {getAllCustomers, getCustomerID, newsLetterSubs, updateProfile, }

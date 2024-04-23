@@ -8,10 +8,11 @@ const {createTables, dropped} = require('./database/runQueries')
 const errorHandler = require('./middlewares/errorHandler');
 
 // impport routes
-const {router} = require('./routes/user.routes')
+const auth = require('./routes/auth.routes')
 const admin = require('./routes/admin.routes')
 const product =require('./routes/product.routes')
 const orders =require('./routes/orders.routes')
+const users =require('./routes/customers.routes')
 
 
 config.config({path: "./config/config.env"})
@@ -48,10 +49,11 @@ app.use(cors())     //should be the first middleware
 // app.options('*', cors());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
-app.use('/api', router)
+app.use('/api/auth', auth)
 app.use('/api/admin', admin)
 app.use('/api/product', product)
 app.use('/api/orders', orders)
+app.use('/api/users', users)
 
 
 app.use(errorHandler)   //should be the last middleware

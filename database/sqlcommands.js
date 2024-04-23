@@ -97,12 +97,12 @@ CREATE TABLE IF NOT EXISTS Services(
 const createOrderDetailsTable = `
 CREATE TABLE IF NOT EXISTS OrderDetails(
     OD_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    order_id VARCHAR(255),
+    prod_id VARCHAR(255),
+    service_id INT,
+    quantity INT,
     total_sum DECIMAL(10,2),
     isDeleted  BOOLEAN DEFAULT FALSE,
-    quantity INT,
-    service_id INT,
-    prod_id VARCHAR(255),
-    order_id VARCHAR(255),
 
     FOREIGN KEY (order_id) REFERENCES CustomerOrder(order_id),
     FOREIGN KEY (prod_id) REFERENCES Product(prod_id) ON DELETE SET NULL ON UPDATE CASCADE,

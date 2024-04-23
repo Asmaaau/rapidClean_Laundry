@@ -201,8 +201,8 @@ const login = async (req, res, next) => {
     // hash the password entered during login using the salt retrieved from database
     const hashedPassword = authpassword(salt, credentials.userpassword);
 
-    console.log(checkUser[0].userpassword);
-    console.log(hashedPassword);
+    // console.log(checkUser[0].userpassword);
+    // console.log(hashedPassword);
 
     // check that the hashed password in the previuos line of code is identical to the one stored in the database
     if (checkUser[0].userpassword != hashedPassword) {
@@ -387,13 +387,62 @@ const resetPasssword = async (req, res, next) => {
   }
 };
 
+const changePassword = async (req, res, next) => {
+  try {
+    // get password
+    const {current_password, userpassword } = req.body;
+
+    if (!current_password || !userpassword ) return next(new ErrorResponse("Input password", 400))
+
+    // generate a salt value using the hash function
+    const salt = hash();
+
+
+    //hash the new password
+    userpassword = authpassword(salt, req.body.userpassword);
+
+    // create connection to database
+    const connection = await connectDB();
+
+    const email = req.user.email
+
+    // run query to check that current passsword is correct
+    const checkEmail = await runQuery(connection, checkEmailLogin, [
+      email
+    ]);
+
+    // handle false result
+    if (checkEmail.userpassword !== current_password) {
+      return next(new ErrorResponse("Incorrect Password", 401));
+    }
+
+    // update password and salt using query
+    const updatePWD = await runQuery(connection, updateLogin, [
+      userpassword,
+      salt,
+      email,
+    ]);
+
+    // send successful reset message to client side
+    return res
+      .status(200)
+      .json({ message: "Password changed successfully." });
+  } catch (err) {
+
+    // handle error
+    console.error("Error during change:", err);
+    return next(err);
+  }
+}
+
 module.exports = {
   login,
   signup,
   verifyUserEmail,
   resendVerification,
   forgotPassword,
-  resetPasssword
+  resetPasssword,
+  changePassword,
 };
 
 

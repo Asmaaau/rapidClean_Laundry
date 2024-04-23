@@ -31,7 +31,8 @@ exports.insertProduct = async (req, res, next) => {
 };
 
 exports.getAllProducts = async (req, res, next) => {
-  const connection = await connectDB();
+  try{
+    const connection = await connectDB();
   console.log(req.query);
   connection.query(getAllProds, (err, result) => {
     connection.release();
@@ -47,6 +48,9 @@ exports.getAllProducts = async (req, res, next) => {
       })
     }
   })
+  } catch(err){
+    return next(err)
+  }
 };
 // exports.getAllProducts = async (req, res, next) => {
 //   const connection = await connectDB();

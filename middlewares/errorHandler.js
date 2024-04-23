@@ -15,10 +15,15 @@ module.exports = errorHandler = (err, req, res, next) => {
     error.message = "Product already exist"
     error.statusCode = 401
   }
+  if (error.message === "jwt expired") {
+    error.message = "Token Expired"
+    error.statusCode = 400
+  }
 
   //  send response to user
   res.status(error.statusCode || 500).json({
     status: false,
     message: error.message || "Server error",
+    statusCode: error.statusCode
 });
 };
