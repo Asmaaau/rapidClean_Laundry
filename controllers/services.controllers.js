@@ -19,3 +19,6 @@ exports.insertServices = async(req, res, next) => {
           return next(err)
      }
 }
+
+// Get All Services
+// Get Order Mode

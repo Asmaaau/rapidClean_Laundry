@@ -359,3 +359,4 @@ module.exports = {
 
 
 // notifications stored in the database
+// update customer status, order status

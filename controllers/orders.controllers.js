@@ -90,4 +90,8 @@ const showCusOrder = async (req, res, next) => {
   }
 };
 
+// get all orders
+
+// get one custmer order
+
 module.exports = { customerOrder, showCusOrder };
