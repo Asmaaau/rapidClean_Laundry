@@ -2,14 +2,18 @@ const { v4: uuidv4 } = require("uuid");
 const { connectDB, runQuery } = require("../database/db.config");
 const { insertSignup, updateVerify, updateEmailToken, checkEmailToken, checkEmailLogin, updateLogin } = require("../database/auth.sqlcommand");
 const ErrorResponse = require("../helper/errorResponse");
-const { authpassword, hash, genToken, generateOTP, generateId } = require("../helper/authentication");
+const { authpassword, hash, genToken, generateOTP } = require("../helper/authentication");
 const { sendMail } = require("../utils/sendMail");
+const fs = require('fs');
+const path = require('path');
+
+const readEmailTemplate = (templateName) => {
+  const emailTemplatePath = path.join(__dirname, '..', 'templates', `${templateName}.html`);
+  const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
+  return emailTemplate;
+};
 
 const signup = async (req, res, next) => {
-
-  // generate a random id using function created
-  // const cus_id = uuidv4();
-  // const cus_id = generateId();
 
   // create a salt using the hash function created in the helper file
   const salt = hash();
@@ -73,17 +77,22 @@ const signup = async (req, res, next) => {
 
     // const verificationLink = `${req.protocol}://${req.get("host")}/api/user/verify-email?emailToken=${emailToken}&redirect=/login`
 
+    // Read the email template
+    const emailTemplate = readEmailTemplate('verificationEmail');
+
+    const firstName = credentials.fullname.split(' ')[0];
+    const verificationLink = `http://localhost:5173/Login?emailToken=${emailToken}`;
+
+    const emailContent = emailTemplate
+      .replace('{{firstName}}', firstName)
+      .replace('{{verificationLink}}', verificationLink);
+
     const options = {
       // from: "kharchiee@outlook.com",
       from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
       to: credentials.email,
       subject: "Verify your email...",
-      html: `<h1><b>Hello ${credentials.fullname.split(' ')[0]} 👋,</b></h1>
-                <p>Verify your email by clicking the button below,<br>
-                Then log in using your email and password you set</p>
-                <a href='http://localhost:5173/Login?emailToken=${emailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
-                <p>This link will remain valid for 1 day. If you have not verified your email address by then, you will have to create another account.</p>
-                `,
+      html: emailContent,
     };
 
     await sendMail(options);
@@ -96,7 +105,7 @@ const signup = async (req, res, next) => {
   } catch (err) {
     if (err.errno === 1062 && err.sqlMessage.includes("email")) {
       if (checkUser[0].isVerified === true) {
-        
+
         return;
       } else {
         return res.status(200).json({
@@ -236,18 +245,23 @@ const resendVerification = async (req, res, next) => {
       email,
     ]);
 
+    // Read the email template
+    const emailTemplate = readEmailTemplate('verificationEmail');
+
+    const firstName = credentials.fullname.split(' ')[0];
+    const verificationLink = `http://localhost:5173/Login?emailToken=${emailToken}`;
+
+    const emailContent = emailTemplate
+      .replace('{{firstName}}', firstName)
+      .replace('{{verificationLink}}', verificationLink);
+
 
     const options = {
       // from: "kharchiee@outlook.com",
       from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
       to: email,
       subject: "Verify your email...",
-      html: `<h1><b>Hello ${checkEmail[0].fullname.split(' ')[0]} 👋,</b></h1>
-                <p>Verify your email by clicking the button below,<br>
-                Then log in using your email and password you set</p>
-                <a href='http://localhost:5173/Login?emailToken=${newEmailToken}' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>Verify Your Email</a>
-                <p>This link will remain valid for 1 day. If you have not verified your email address by then, you will have to create another account.</p>
-                `,
+      html: emailContent,
     };
 
     await sendMail(options);
@@ -275,25 +289,37 @@ const forgotPassword = async (req, res, next) => {
       email,
     ]);
 
+    // create the emailToken using the hash() method
+    const emailToken = hash();
+
     // handle false result
     if (checkEmail.length === 0) {
       return next(new ErrorResponse("Account does not exist. Signup", 401));
     }
 
-    const otp = generateOTP();
+
+    const result = await runQuery(connection, updateEmailToken, [
+      email,
+      emailToken,
+    ]);
+    // const otp = generateOTP();
+
+    // Read the email template
+    const emailTemplate = readEmailTemplate('resetPassword');
+
+    const firstName = checkEmail[0].fullname.split(' ')[0];
+    const verificationLink = `http://localhost:5173/Login?emailToken=${emailToken}`; // email verified proceed to login
+
+    const emailContent = emailTemplate
+      .replace('{{firstName}}', firstName)
+      .replace('{{verificationLink}}', verificationLink);
 
     const options = {
       // from: "kharchiee@outlook.com",
       from: '"Rapid Clean Laundry" <kharchiee@outlook.com>',
       to: email,
       subject: "Password Reset Request...",
-      html: `<h1><b>Hello ${checkEmail[0].fullname.split(' ')[0]} 👋,</b></h1>
-                <p>Need a new Paaword?</p>
-                <p>No worries. Use the OTP below to reset your Rapid Clean account password: </p>
-               <h2><b>${otp}</b></h2>
-                <p>This OTP will remain valid for 10 minutes. If you did not request this change, ignore this email and get back to your already amazing day 😇.</p> <br><br>
-                <a><b>Plot 255 Hassan T. Sanni Str. CBN Choos Estate, Apo Wumba</b></a>
-                `,
+      html: emailContent,
     };
 
     await sendMail(options);

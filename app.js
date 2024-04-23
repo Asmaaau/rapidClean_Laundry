@@ -8,7 +8,10 @@ const {createTables, dropped} = require('./database/runQueries')
 const errorHandler = require('./middlewares/errorHandler');
 
 // impport routes
-const {router} = require('./routes/routes')
+const {router} = require('./routes/user.routes')
+const admin = require('./routes/admin.routes')
+const product =require('./routes/product.routes')
+const orders =require('./routes/orders.routes')
 
 
 config.config({path: "./config/config.env"})
@@ -40,13 +43,15 @@ const app = express()
 
 // middleware
 
-// make sure fix this later....temporary fix
 app.use(cors())     //should be the first middleware
 
 // app.options('*', cors());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 app.use('/api', router)
+app.use('/api/admin', admin)
+app.use('/api/product', product)
+app.use('/api/orders', orders)
 
 
 app.use(errorHandler)   //should be the last middleware
@@ -59,6 +64,7 @@ const port = process.env.PORT || 5001;
 
 connectDB().then(()=>{
     console.log("Databse connection successful")
+
 
     
 // start express server

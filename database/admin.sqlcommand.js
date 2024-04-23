@@ -1,20 +1,23 @@
-const insertSignup = `insert into Admin( fullname, email, userpassword, salt, emailToken) values(?,?,?,?,?)`;
+const insertAdminSignup = `insert into Admin( fullname, email, userpassword, salt, emailToken) values(?,?,?,?,?)`;
 
-const checkEmailLogin = `select * from Customer where email = ?`;
+const AdminEmailLogin = `select * from Admin where email = ?`;
 
-const checkEmailToken = `select * from Customer where emailToken = ?`;
+const AdminEmailToken = `select * from Admin where emailToken = ?`;
 
-const updateLogin = "update Customer set userpassword = ?, salt = ? where email = ?";
+const updateAdminLogin = "update Admin set userpassword = ?, salt = ? where email = ?";
 
-const updateVerify = "update Customer set isVerified = ?, emailToken = NULL where emailToken = ?";
+const updatAdminVerify = "update Admin set isVerified = ?, emailToken = NULL where emailToken = ?";
 
-const updateEmailToken = "update Customer set emailToken = ? where email = ?"
+const updateAdminEmailToken = "update Admin set emailToken = ? where email = ?"
+
+const getAdminByID = "select * from Admin where admin_id = ?";
 
 module.exports = {
-     insertSignup,
-    checkEmailLogin,
-    checkEmailToken,
-    updateLogin,
-    updateVerify,
-    updateEmailToken,
+     insertAdminSignup,
+     AdminEmailLogin,
+     AdminEmailToken,
+     updateAdminLogin,
+     updatAdminVerify,
+     updateAdminEmailToken,
+     getAdminByID
 }

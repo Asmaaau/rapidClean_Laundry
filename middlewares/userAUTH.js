@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const ErrorResponse = require("../helper/errorResponse");
 const { getCusByID } = require("../database/customers.sqlcommand");
 const { connectDB, runQuery } = require("../database/db.config");
+const {getAdminByID} = require("../database/admin.sqlcommand")
 
 const verifyAuth = async (req, res, next) => {
   try {
@@ -10,7 +11,7 @@ const verifyAuth = async (req, res, next) => {
     let checkUserId;
 
     const bearer = req.headers["authorization"];
-    console.log(req.headers);
+    // console.log(req.headers);
 
     const auth = req.headers["auth"];
     // console.log(req.headers);
@@ -26,7 +27,7 @@ const verifyAuth = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log(decoded);
+    // console.log(decoded);
 
     if (!decoded.userid) {
       return next(new ErrorResponse("Unauthorized user", 401));
@@ -35,7 +36,7 @@ const verifyAuth = async (req, res, next) => {
     // recheck this code
     if (auth && auth == "admin-auth") {
       //get user by id for admin
-      checkUserId = await runQuery(connection, sqlcommandforadmin, [
+      checkUserId = await runQuery(connection, getAdminByID, [
         decoded.userid,
       ]);
     } else {
@@ -70,8 +71,8 @@ const verifyAdminAuth = async (req, res, next) => {
     let checkUserId;
 
     const bearer = req.headers["authorization"];
-    console.log(req);
-    console.log(req.headers);
+    // console.log(req);
+    // console.log(req.headers);
 
     const auth = req.headers["auth"];
     // console.log(req.headers);
@@ -98,7 +99,7 @@ const verifyAdminAuth = async (req, res, next) => {
     }
 
     // fix sql command query
-    checkUserId = await runQuery(connection, sqlcommandforadmin, [
+    checkUserId = await runQuery(connection, getAdminByID, [
       decoded.userid,
     ]);
     //     console.log(checkUserId);

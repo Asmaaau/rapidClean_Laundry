@@ -1,7 +1,7 @@
 const { connectDB } = require('./db.config')
 // const { createAdminTable, createCustomerTable, createAddressTable, dropTable, createOrderTable, createProductTable, createServicesTable, createExtrasTable, createOrderDetailsTable, createDeliveryModeTable, createCategoryTable } = require('./sqlcommands')
-const { createAdminTable, createCustomerTable, createAddressTable, dropTable, createOrderTable, createProductTable, createServicesTable, createExtrasTable, createOrderDetailsTable, createDeliveryModeTable, createDeliveryTable, createCategoryTable } = require('./sqlcommands')
-
+const { createAdminTable, createCustomerTable, dropTable, createOrderTable, createProductTable, createServicesTable, createExtrasTable, createOrderDetailsTable, createDeliveryModeTable, createDeliveryTable, createCategoryTable, createTestimonialsTable } = require('./sqlcommands')
+const {  createDeliveryTimeTable, createContactInfoTable, createBlogTable, createBlogCategoryTable, createNewsLetterTable,} = require('./sqlcommands')
 
 // const createTables = async (req, res) => {
 //     const connection = await connectDB()
@@ -30,17 +30,23 @@ const createTables = async (req, res, next) => {
 
         if (result.length === 0) {
             try {
-                connection.query(createAddressTable);
                 connection.query(createAdminTable);
                 connection.query(createCustomerTable);
                 connection.query(createOrderTable);
                 connection.query(createCategoryTable);
                 connection.query(createProductTable);
                 connection.query(createServicesTable);
-                connection.query(createExtrasTable);
                 connection.query(createOrderDetailsTable);
                 connection.query(createDeliveryModeTable);
+                connection.query(createDeliveryTimeTable);
                 connection.query(createDeliveryTable);
+                connection.query(createContactInfoTable);
+                connection.query(createBlogCategoryTable);
+                connection.query(createBlogTable);
+                connection.query(createNewsLetterTable);
+                connection.query(createTestimonialsTable);
+
+                
                 
                 connection.release();
                 // console.log("Tables created successfully");

@@ -16,7 +16,7 @@ exports.sendMail = async (options) => {
       console.log(err)
     }
     else {
-      console.log("Email Verification Sent")
+      console.log("Email Sent")
     }
   });
 

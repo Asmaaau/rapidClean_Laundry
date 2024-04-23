@@ -11,13 +11,15 @@ require('dotenv').config()
 // })
 
 // console.log(process.env.DB_HOST)
+// console.log(process.env.DB_NAME)
 // console.log(typeof process.env.DB_HOST)
+
 
 const connect = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
-    password: "heavenfreak11",
+    password: "",
     database: "rapid_clean"
 })
 

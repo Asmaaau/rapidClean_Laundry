@@ -2,7 +2,7 @@ const { pushCategory, getAllCat, getCatByID } = require("../database/category.sq
 const { connectDB, runQuery } = require("../database/db.config");
 const ErrorResponse = require("../helper/errorResponse");
 
-exports.addCategory = async (req, res, next) => {
+const addCategory = async (req, res, next) => {
   try {
     const connection = await connectDB();
 
@@ -21,8 +21,10 @@ exports.addCategory = async (req, res, next) => {
   }
 };
 
-exports.getAllCategories = async (req, res, next) => {
+const getAllCategories = async (req, res, next) => {
+try {
   const connection = await connectDB();
+  
   connection.query(getAllCat, (err, result) => {
     connection.release();
 
@@ -38,9 +40,12 @@ exports.getAllCategories = async (req, res, next) => {
       })
     }
   })
+} catch(err){
+  return next(err)
+}
 };
 
-exports.getACategory = async (req, res, next) => {
+const getACategory = async (req, res, next) => {
   try {
 
     //  Retrieve customer ID from request parameters
@@ -56,13 +61,13 @@ exports.getACategory = async (req, res, next) => {
     const getACategory = await runQuery(connection, getCatByID, [cat_id])
 
     if (getACategory.length === 0) {
-      return next(new ErrorResponse(`Product with id: ${cat_id} does not exist`, 404))
+      return next(new ErrorResponse(`Category with id: ${cat_id} does not exist`, 404))
     }
 
     res.status(200).json({
       status: true,
       data: getACategory[0],
-      message: `Product with id: ${cat_id} retrieved succesfully`
+      message: `Category with id: ${cat_id} retrieved succesfully`
     })
   }
   catch (err) {
@@ -84,3 +89,5 @@ exports.deleteCategory = async (req, res, next) => {
 exports.deleteAllCategory = async (req, res, next) => {
 
 }
+
+module.exports = { getACategory, getAllCategories, addCategory}

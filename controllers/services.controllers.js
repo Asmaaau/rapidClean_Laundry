@@ -8,7 +8,7 @@ exports.insertServices = async(req, res, next) => {
 
           const { service_type, prod_id, price } = req.body;
 
-          const setServices = await runQuery(connection, pushServices, [service_type, prod_id, price])
+          const setServices = await runQuery(connection, pushServices, [prod_id, service_type, price])
 
           res.status(200).json({
                status: true,

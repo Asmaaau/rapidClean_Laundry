@@ -1,23 +1,24 @@
-const { pushProduct, getAllProds, getProdByID, productByCat, updateProduct, deleteProduct, deleteProductandServices } = require("../database/products.sqlcommand");
+const { pushProduct, getAllProds, getProdByID, productByCat, updateProduct, deleteProduct, deleteProductandServices, priceList } = require("../database/products.sqlcommand");
 const { connectDB, runQuery } = require("../database/db.config");
-const { generateShorterID } = require("../helper/authentication");
+const { generateShorterID, generateSpecialId, generateNumID } = require("../helper/authentication");
 const ErrorResponse = require("../helper/errorResponse");
 
 exports.insertProduct = async (req, res, next) => {
   try {
     const connection = await connectDB();
 
-    const prod_id = generateShorterID();
+    const prod_id = generateNumID();
 
     // make the prod_type unique
 
     // deconstructing
-    const { prod_type, icon_url } = req.body;
+    const { prod_type, cat_id, icon_url } = req.body;
 
     const makeProduct = await runQuery(connection, pushProduct, [
       prod_id,
       prod_type,
       icon_url,
+      cat_id
     ]);
 
     res.status(201).json({
@@ -31,12 +32,13 @@ exports.insertProduct = async (req, res, next) => {
 
 exports.getAllProducts = async (req, res, next) => {
   const connection = await connectDB();
+  console.log(req.query);
   connection.query(getAllProds, (err, result) => {
     connection.release();
 
     if (err) {
       console.log(err)
-      return next(new ErrorResponse("Cannot Get Product", 404))
+      return next(new ErrorResponse("Cannot Get Product", 400))
     }
     else {
       return res.status(200).json({
@@ -46,6 +48,24 @@ exports.getAllProducts = async (req, res, next) => {
     }
   })
 };
+// exports.getAllProducts = async (req, res, next) => {
+//   const connection = await connectDB();
+//   console.log(req.query);
+//   connection.query(getAllProds, (err, result) => {
+//     connection.release();
+
+//     if (err) {
+//       console.log(err)
+//       return next(new ErrorResponse("Cannot Get Product", 400))
+//     }
+//     else {
+//       return res.status(200).json({
+//         status: true,
+//         data: result
+//       })
+//     }
+//   })
+// };
 
 exports.getAProduct = async (req, res, next) => {
   try {
@@ -63,7 +83,7 @@ exports.getAProduct = async (req, res, next) => {
     const getAProduct = await runQuery(connection, getProdByID, [prod_id])
 
     if (getAProduct.length === 0) {
-      return next(new ErrorResponse(`Product with id: ${prod_id} does not exist`, 404))
+      return next(new ErrorResponse(`Product with id: ${prod_id} does not exist`, 400))
     }
 
     res.status(200).json({
@@ -77,25 +97,33 @@ exports.getAProduct = async (req, res, next) => {
   }
 }
 
-exports.getProducstByCategory = async (req, res, next) => {
+exports.getProductByCategory = async (req, res, next) => {
   try {
-    const cat_id = req.params.id
+    const cat_id = req.query.id
 
     const connection = await connectDB();
+    console.log(req.query);
 
-    if (!cat_id) {
-      return next(new ErrorResponse("Select a category...", 401))
+    if (!cat_id) {40
+      return next(new ErrorResponse("Select a category...", 400))
     }
 
     const getProducts = await runQuery(connection, productByCat, [cat_id])
 
     if (getProducts.length === 0) {
-      return next(new ErrorResponse(`No Products in category ${cat_id} yet`, 404))
+      return next(new ErrorResponse(`No Products in category ${cat_id} yet`, 400))
+
     }
 
+    return res.status(200).json({
+      status: true,
+      data: getProducts
+    })
 
   } catch (err) {
+    console.log(err);
     return next(err)
+    
   }
 
 }
@@ -203,6 +231,30 @@ exports.deleteProduct = async (req, res, next) => {
 
 exports.deleteAllProducts = async (req, res, next) => {
 
+}
+
+exports.setPriceList = async (req, res, next) => {
+  try{
+    const connection = await connectDB();
+
+      connection.query(priceList, (err, result) => {
+        connection.release();
+    
+        if (err) {
+          console.log(err)
+          return next(new ErrorResponse("Cannot Get List", 400))
+        }
+        else {
+          return res.status(200).json({
+            status: true,
+            data: result
+          })
+        }
+      })
+  } catch(err) {
+    console.log(err);
+    return next(err)
+  }
 }
 
 
